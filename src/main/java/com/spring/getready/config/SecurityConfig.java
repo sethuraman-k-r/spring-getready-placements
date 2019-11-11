@@ -34,15 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) {
 		web.ignoring().antMatchers("/public/**");
-
 	}
 
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-//		http.authorizeRequests().antMatchers("/resources/**").permitAll().anyRequest().authenticated().and()
-//				.formLogin().loginPage("/login").permitAll().and().logout().permitAll();
-		http.authorizeRequests().antMatchers("/home/**").hasRole("USER").and().formLogin().loginPage("/login")
-				.successHandler(successHandler).permitAll().and().logout().permitAll();
+		http.authorizeRequests().antMatchers("/home/**").hasRole("USER").antMatchers("/admin/**").hasRole("ADMIN").and()
+				.formLogin().loginPage("/login").successHandler(successHandler).permitAll().and().logout()
+				.clearAuthentication(true).invalidateHttpSession(true).deleteCookies("JSESSIONID").permitAll();
 	}
 
 	@Bean

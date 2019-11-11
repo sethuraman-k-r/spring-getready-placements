@@ -8,4 +8,6 @@ import com.spring.getready.model.UserDetail;
 @Repository
 public interface UserDetailRepository extends JpaRepository<UserDetail, Integer> {
 
+	UserDetail findByEmailEquals(String email);
+	
 }

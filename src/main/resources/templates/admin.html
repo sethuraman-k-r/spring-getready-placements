@@ -1,0 +1,99 @@
+<html xmlns:th="https://www.thymeleaf.org" ng-app="atsApp">
+<head>
+<title>ATS - Admin Home</title>
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+	rel="stylesheet">
+<link rel="stylesheet" type="text/css"
+	th:href="@{/assets/css/style.css}"></link>
+<script type="text/javascript"
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.8/angular.min.js"></script>
+</head>
+<body ng-controller="adminHomeController">
+	<nav
+		class="flex items-center justify-between flex-wrap bg-gray-700 p-6">
+		<div class="flex items-center flex-shrink-0 text-white mr-6">
+			<span class="font-semibold text-xl tracking-tight">Spring ATS</span>
+		</div>
+		<div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+			<div class="text-sm lg:flex-grow"></div>
+			<div>
+				<a href="#" class="inline-block mt-0 text-white mr-4"
+					th:text="${username}"> Name </a> <a href="logout"
+					class="inline-block text-sm px-4 py-2 leading-none hover:text-teal-400 text-white mt-0">Logout</a>
+			</div>
+		</div>
+	</nav>
+	<div class="container mx-auto m-4">
+		<div class="flex mb-4">
+			<div class="w-1/4 h-64">
+				<ul class="list-none">
+					<li
+						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
+						ng-click="selectMenu(1)"
+						ng-class="{'text-white bg-teal-700' : menuItem===1, 'text-teal-700 hover:border-gray-300' : menuItem!==1}">Manage
+						Users</li>
+					<li
+						class="p-4 border-2 border-white cursor-pointer rounded text-teal-700 hover:font-medium"
+						ng-click="selectMenu(2)"
+						ng-class="{'text-white bg-teal-700' : menuItem===2, 'text-teal-700 hover:border-gray-300' : menuItem!==2}">Assignment</li>
+					<li
+						class="p-4 border-2 border-white cursor-pointer rounded text-teal-700 hover:font-medium"
+						ng-click="selectMenu(3)"
+						ng-class="{'text-white bg-teal-700' : menuItem===3, 'text-teal-700 hover:border-gray-300' : menuItem!==3}">Courses</li>
+					<li
+						class="p-4 border-2 border-white cursor-pointer rounded text-teal-700 hover:font-medium"
+						ng-click="selectMenu(4)"
+						ng-class="{'text-white bg-teal-700' : menuItem===4, 'text-teal-700 hover:border-gray-300' : menuItem!==4}">Manage
+						Staff</li>
+				</ul>
+			</div>
+			<div class="w-3/4 h-auto p-5 border-2 rounded">
+				<div class="w-full flex flex-row-reverse">
+					<div class="inline-flex">
+						<input type="file" name="users" accept=".xls, .xlsx"
+							class="bg-gray-300 p-1 rounded-l w-32" /> <a
+							th:href="@{download/users}">
+							<button
+								class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 font-bold rounded-none"
+								title="Upload users here">Upload</button>
+						</a> <a th:href="@{download/users}" target="_blank">
+							<button
+								class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 font-bold rounded-r"
+								title="Download template">Download</button>
+						</a>
+					</div>
+				</div>
+				<table class="table-fixed">
+					<thead>
+						<tr>
+							<th class="w-1/2 px-4 py-2">Title</th>
+							<th class="w-1/4 px-4 py-2">Author</th>
+							<th class="w-1/4 px-4 py-2">Views</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="border px-4 py-2">Intro to CSS</td>
+							<td class="border px-4 py-2">Adam</td>
+							<td class="border px-4 py-2">858</td>
+						</tr>
+						<tr class="bg-gray-100">
+							<td class="border px-4 py-2">A Long and Winding Tour of the
+								History of UI Frameworks and Tools and the Impact on Design</td>
+							<td class="border px-4 py-2">Adam</td>
+							<td class="border px-4 py-2">112</td>
+						</tr>
+						<tr>
+							<td class="border px-4 py-2">Into to JavaScript</td>
+							<td class="border px-4 py-2">Chris</td>
+							<td class="border px-4 py-2">1,280</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" th:src="@{/assets/js/app.js}"></script>
+	<script type="text/javascript" th:src="@{/assets/js/controller.js}"></script>
+</body>
+</html>

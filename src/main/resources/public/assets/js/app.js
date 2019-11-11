@@ -1,0 +1,1 @@
+var atsApp = angular.module('atsApp', []);

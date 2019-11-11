@@ -25,24 +25,30 @@ public class AuthSuccessHandler implements AuthenticationSuccessHandler {
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException {
 		handleRedirects(request, response, authentication);
-//		clearAuthenticationAttributes(request);
 	}
 
 	protected void handleRedirects(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException {
 		boolean isUser = false;
+		boolean isAdmin = false;
 		String targetUrl = null;
-		
+
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		for (GrantedAuthority grantedAuthority : authorities) {
 			if (grantedAuthority.getAuthority().equals("ROLE_USER")) {
 				isUser = true;
 				break;
 			}
+			if (grantedAuthority.getAuthority().equals("ROLE_ADMIN")) {
+				isAdmin = true;
+				break;
+			}
 		}
 
 		if (isUser) {
 			targetUrl = "/home";
+		} else if (isAdmin) {
+			targetUrl = "/admin";
 		} else {
 			targetUrl = "/error";
 		}
