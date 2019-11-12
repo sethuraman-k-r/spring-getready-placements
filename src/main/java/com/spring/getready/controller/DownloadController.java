@@ -24,35 +24,24 @@ public class DownloadController {
 	@RequestMapping(path = "/download/{file}", method = RequestMethod.GET)
 	public ResponseEntity<Object> downloadFile(@PathVariable String file, HttpServletRequest request) {
 		Resource resource = null;
-		String contentType = null;
-
-		if (file.contentEquals("users")) {
-			resource = resourceLoader.getResource("classpath:format/user_template.xlsx");
-		}
+		String users_template = null;
 
 		try {
-			if (resource != null) {
-				contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+			if (file.contentEquals("users")) {
+				resource = resourceLoader.getResource("classpath:format/user_template.json");
+				users_template = new String(resource.getInputStream().readAllBytes());
 			}
 		} catch (IOException ex) {
 			System.out.println("Could not determine file type.");
 		}
 
-		if (resource != null) {
-			if (contentType == null) {
-				contentType = "application/octet-stream";
-			}
-		} else {
-			contentType = "application/json";
-		}
-
-		if (contentType.contentEquals("application/json")) {
+		if (resource == null) {
 			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
 					.body("{\"message\" : \"Request error\"}");
 		} else {
-			return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+			return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-					.body(resource);
+					.body(users_template);
 		}
 	}
 

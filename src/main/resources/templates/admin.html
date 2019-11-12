@@ -48,15 +48,24 @@
 				</ul>
 			</div>
 			<div class="w-3/4 h-auto p-5 border-2 rounded">
+				<div th:if="${message}"
+					class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
+					role="alert">
+					<strong class="font-bold">Success!!</strong> <span
+						class="block sm:inline" th:text="${message}"></span> <span
+						class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+				</div>
 				<div class="w-full flex flex-row-reverse">
 					<div class="inline-flex">
-						<input type="file" name="users" accept=".xls, .xlsx"
-							class="bg-gray-300 p-1 rounded-l w-32" /> <a
-							th:href="@{download/users}">
-							<button
+						<form th:action="@{/admin/upload/users}" method="post"
+							enctype="multipart/form-data">
+							<input type="file" name="users" accept=".json"
+								class="bg-gray-300 p-1 rounded-l w-32" />
+							<button type="submit"
 								class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 font-bold rounded-none"
 								title="Upload users here">Upload</button>
-						</a> <a th:href="@{download/users}" target="_blank">
+						</form>
+						<a th:href="@{download/users}" target="_blank">
 							<button
 								class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 font-bold rounded-r"
 								title="Download template">Download</button>
@@ -66,27 +75,28 @@
 				<table class="table-fixed">
 					<thead>
 						<tr>
-							<th class="w-1/2 px-4 py-2">Title</th>
-							<th class="w-1/4 px-4 py-2">Author</th>
-							<th class="w-1/4 px-4 py-2">Views</th>
+							<th class="w-1/5 px-4 py-2">#</th>
+							<th class="w-1/5 px-4 py-2">Name</th>
+							<th class="w-2/5 px-4 py-2">Email</th>
+							<th class="w-1/5 px-4 py-2">Joined on</th>
+							<th class="w-1/5 px-4 py-2">Status</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td class="border px-4 py-2">Intro to CSS</td>
-							<td class="border px-4 py-2">Adam</td>
-							<td class="border px-4 py-2">858</td>
-						</tr>
-						<tr class="bg-gray-100">
-							<td class="border px-4 py-2">A Long and Winding Tour of the
-								History of UI Frameworks and Tools and the Impact on Design</td>
-							<td class="border px-4 py-2">Adam</td>
-							<td class="border px-4 py-2">112</td>
-						</tr>
-						<tr>
-							<td class="border px-4 py-2">Into to JavaScript</td>
-							<td class="border px-4 py-2">Chris</td>
-							<td class="border px-4 py-2">1,280</td>
+						<tr th:each="user,itr: ${users}">
+							<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
+							<td class="border px-4 py-2" th:text="${user.username}"></td>
+							<td class="border px-4 py-2" th:text="${user.email}"></td>
+							<td class="border px-4 py-2 text-center"
+								th:text="${#dates.format(user.createdOn, 'dd MMM yyyy')}"></td>
+							<td class="border px-4 py-2 text-center"
+								th:if="${user.isLocked}!=true">
+								<div class="inline bg-green-400 px-1 pl-4 rounded-full"></div>
+							</td>
+							<td class="border px-4 py-2 text-center"
+								th:if="${user.isLocked}==true">
+								<div class="inline bg-red-400 px-1 pl-4 rounded-full"></div>
+							</td>
 						</tr>
 					</tbody>
 				</table>

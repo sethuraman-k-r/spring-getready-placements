@@ -1,0 +1,22 @@
+[
+    {
+        "username": "Peter",
+        "email": "peter@ats.com",
+        "group": 3
+    },
+    {
+        "username": "Tony",
+        "email": "tony@ats.com",
+        "group": 2
+    },
+    {
+        "username": "Manu",
+        "email": "manu@ats.com",
+        "group": 3
+    },
+    {
+        "username": "Max",
+        "email": "max@ats.com",
+        "group": 3
+    }
+]

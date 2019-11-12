@@ -2,6 +2,9 @@ package com.spring.getready.model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -32,6 +35,7 @@ public class UserDetail implements Serializable {
 	@Column(name="last_login_on")
 	private Timestamp lastLoginOn;
 
+	@JsonIgnore
 	private String password;
 
 	@Column(name="user_uuid")
