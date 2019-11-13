@@ -18,7 +18,7 @@
 			<div class="text-sm lg:flex-grow"></div>
 			<div>
 				<a href="#" class="inline-block mt-0 text-white mr-4"
-					th:text="${username}"> Name </a> <a href="logout"
+					th:text="${username}"> Name </a> <a href="../logout"
 					class="inline-block text-sm px-4 py-2 leading-none hover:text-teal-400 text-white mt-0">Logout</a>
 			</div>
 		</div>
@@ -29,25 +29,27 @@
 				<ul class="list-none">
 					<li
 						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
-						ng-click="selectMenu(1)"
-						ng-class="{'text-white bg-teal-700' : menuItem===1, 'text-teal-700 hover:border-gray-300' : menuItem!==1}">Manage
-						Users</li>
+						th:classappend="${users} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/users}">Manage Users</a>
+					</li>
 					<li
-						class="p-4 border-2 border-white cursor-pointer rounded text-teal-700 hover:font-medium"
-						ng-click="selectMenu(2)"
-						ng-class="{'text-white bg-teal-700' : menuItem===2, 'text-teal-700 hover:border-gray-300' : menuItem!==2}">Assignment</li>
+						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
+						th:classappend="${assignment} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/assignment}">Assignment</a>
+					</li>
 					<li
-						class="p-4 border-2 border-white cursor-pointer rounded text-teal-700 hover:font-medium"
-						ng-click="selectMenu(3)"
-						ng-class="{'text-white bg-teal-700' : menuItem===3, 'text-teal-700 hover:border-gray-300' : menuItem!==3}">Courses</li>
+						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
+						th:classappend="${course} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/course}">Courses</a>
+					</li>
 					<li
-						class="p-4 border-2 border-white cursor-pointer rounded text-teal-700 hover:font-medium"
-						ng-click="selectMenu(4)"
-						ng-class="{'text-white bg-teal-700' : menuItem===4, 'text-teal-700 hover:border-gray-300' : menuItem!==4}">Manage
-						Staff</li>
+						class="p-4 border-2 border-white cursor-pointer rounded hover:font-medium"
+						th:classappend="${staff} ? 'text-white bg-teal-700' :  'text-teal-700 hover:border-gray-300'">
+						<a th:href="@{/admin/staff}">Manage Staff</a>
+					</li>
 				</ul>
 			</div>
-			<div class="w-3/4 h-auto p-5 border-2 rounded">
+			<div class="w-3/4 h-auto p-5 border-2 rounded" th:if="${users}">
 				<div th:if="${message}"
 					class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
 					role="alert">
@@ -72,19 +74,33 @@
 						</a>
 					</div>
 				</div>
+				<div class="w-full flex flex-row-reverse">
+					<div class="mb-4">
+						<input
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							type="text" placeholder="Search here" ng-model="users">
+					</div>
+				</div>
 				<table class="table-fixed">
 					<thead>
 						<tr>
-							<th class="w-1/5 px-4 py-2">#</th>
-							<th class="w-1/5 px-4 py-2">Name</th>
-							<th class="w-2/5 px-4 py-2">Email</th>
-							<th class="w-1/5 px-4 py-2">Joined on</th>
-							<th class="w-1/5 px-4 py-2">Status</th>
+							<th class="w-1/6 px-4 py-2">#</th>
+							<th class="w-1/6 px-4 py-2">Name</th>
+							<th class="w-2/6 px-4 py-2">Email</th>
+							<th class="w-1/6 px-4 py-2">Joined on</th>
+							<th class="w-1/6 px-4 py-2">Status</th>
+							<th class="w-1/6 px-4 py-2">Action</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="user,itr: ${users}">
-							<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
+						<tr th:if="${users.size()==0}">
+							<td colspan="6" class="border px-4 py-2 text-center">No
+								users found</td>
+						</tr>
+						<tr th:each="user,itr: ${users}"
+							th:ng-if="'doSearchUser(\'' + ${user.username}  + '\',\'' + ${user.email} + '\')'">
+							<td class="border px-4 py-2 text-center"
+								th:text="${itr.index + 1}"></td>
 							<td class="border px-4 py-2" th:text="${user.username}"></td>
 							<td class="border px-4 py-2" th:text="${user.email}"></td>
 							<td class="border px-4 py-2 text-center"
@@ -97,9 +113,107 @@
 								th:if="${user.isLocked}==true">
 								<div class="inline bg-red-400 px-1 pl-4 rounded-full"></div>
 							</td>
+							<td class="border px-4 py-2 text-center">
+								<form method="post" th:action="@{/admin/user/reset}"
+									class="mb-0">
+									<input type="hidden" name="user" th:value="${user.userId}" />
+									<button type="submit"
+										class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+										<img
+											src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Reset_button.svg" />
+									</button>
+								</form>
+							</td>
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div class="w-3/4 h-auto p-5 border-2 rounded" th:if="${staff}">
+				<div th:if="${message}"
+					class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
+					role="alert">
+					<strong class="font-bold">Success!!</strong> <span
+						class="block sm:inline" th:text="${message}"></span> <span
+						class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+				</div>
+				<div class="w-full flex flex-row-reverse mb-3">
+					<div class="inline-flex">
+						<button class="bg-gray-300 py-2 px-4 font-bold rounded-l"
+							title="Create new staff"
+							ng-click="showStaffList = !showStaffList"
+							ng-class="{'bg-gray-500 text-white': !showStaffList, 'text-gray-800': showStaffList}">Create</button>
+						<button class="bg-gray-300 py-2 px-4 font-bold rounded-r"
+							title="Staff details" ng-click="showStaffList = !showStaffList"
+							ng-class="{'bg-gray-500 text-white': showStaffList, 'text-gray-800': !showStaffList}">Show</button>
+					</div>
+				</div>
+				<div ng-if="!showStaffList">
+					<form class="w-full px-48" method="post"
+						th:action="@{/admin/staff/add}">
+						<div class="flex flex-wrap -mx-3 mb-6">
+							<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+								<label
+									class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+									STAFF NAME </label> <input
+									class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+									type="text" name="staffname" placeholder="Staff name">
+							</div>
+							<div class="w-full md:w-1/2 px-3">
+								<label
+									class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+									Field </label> <input
+									class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+									type="text" name="field" placeholder="Computer Science">
+							</div>
+						</div>
+						<div class="flex flex-wrap -mx-3 mb-6">
+							<div class="w-full px-3">
+								<label
+									class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+									TECHNOLOGY KNOWN </label>
+								<textarea
+									class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+									placeholder="Java, SQL, C, etc" rows="5" name="technology"></textarea>
+							</div>
+						</div>
+						<button
+							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+							type="submit">Add Staff</button>
+					</form>
+				</div>
+				<div ng-if="showStaffList">
+					<div class="w-full flex flex-row-reverse">
+						<div class="mb-4">
+							<input
+								class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+								type="text" placeholder="Search here" ng-keyup="updateStaff($event)">
+						</div>
+					</div>
+					<table class="table-fixed">
+						<thead>
+							<tr>
+								<th class="w-1 px-4 py-2">#</th>
+								<th class="w-4/12 px-4 py-2">Name</th>
+								<th class="w-4/12 px-4 py-2">Field</th>
+								<th class="w-4/12 px-4 py-2">Technology Known</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${staff.size()==0}">
+								<td colspan="4" class="border px-4 py-2 text-center">No
+									staff details found</td>
+							</tr>
+							<tr th:each="staf,itr: ${staff}"
+								th:ng-if="'doSearchStaff(\'' + ${staf.staffName}  + '\', staffs)'">
+								<td class="border px-4 py-2 text-center"
+									th:text="${itr.index + 1}"></td>
+								<td class="border px-4 py-2" th:text="${staf.staffName}"></td>
+								<td class="border px-4 py-2 text-center" th:text="${staf.field}"></td>
+								<td class="border px-4 py-2" th:text="${staf.technologyKnown}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

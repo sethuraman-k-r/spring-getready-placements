@@ -82,4 +82,19 @@ public class UserService {
 		return result;
 	}
 
+	public boolean resetUser(int userId) {
+		boolean result = false;
+		String password = passwordEncoder.encode(filePropertyConfig.getDefaultPassword()).toString();
+		Optional<UserDetail> userDetail = userDetailRepository.findById(userId);
+		if (userDetail.isPresent()
+				&& !userDetail.get().getUserGroup().getGroupName().toLowerCase().contentEquals("admin")) {
+			UserDetail user = userDetail.get();
+			user.setPassword(password);
+			user.setIsLocked(false);
+			userDetailRepository.save(user);
+			result = true;
+		}
+		return result;
+	}
+
 }
