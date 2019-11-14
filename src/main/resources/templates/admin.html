@@ -186,7 +186,8 @@
 						<div class="mb-4">
 							<input
 								class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-								type="text" placeholder="Search here" ng-keyup="updateStaff($event)">
+								type="text" placeholder="Search here"
+								ng-keyup="updateStaff($event)">
 						</div>
 					</div>
 					<table class="table-fixed">
@@ -205,11 +206,31 @@
 							</tr>
 							<tr th:each="staf,itr: ${staff}"
 								th:ng-if="'doSearchStaff(\'' + ${staf.staffName}  + '\', staffs)'">
+								<td
+									class="border px-4 py-2 text-center cursor-pointer no-underline hover:underline"
+									th:text="${itr.index + 1}"
+									th:ng-click="'doSelectStaff(' + ${staf.staffId} + ')'"></td>
+								<td
+									class="border px-4 py-2 cursor-pointer underline hover:no-underline"
+									th:ng-if="'selectedStaff!=' + ${staf.staffId}"
+									th:text="${staf.staffName}"
+									th:ng-click="'doSelectStaff(' + ${staf.staffId} + ')'"></td>
+								<td class="border px-4 py-2"
+									th:ng-if="'selectedStaff==' + ${staf.staffId}"><input
+									type="text" class="shadow py-2 px-3"
+									th:value="${staf.staffName}" /></td>
 								<td class="border px-4 py-2 text-center"
-									th:text="${itr.index + 1}"></td>
-								<td class="border px-4 py-2" th:text="${staf.staffName}"></td>
-								<td class="border px-4 py-2 text-center" th:text="${staf.field}"></td>
-								<td class="border px-4 py-2" th:text="${staf.technologyKnown}"></td>
+									th:ng-if="'selectedStaff!=' + ${staf.staffId}"
+									th:text="${staf.field}"></td>
+								<td class="border px-4 py-2"
+									th:ng-if="'selectedStaff==' + ${staf.staffId}"><input
+									type="text" class="shadow py-2 px-3" th:value="${staf.field}" /></td>
+								<td class="border px-4 py-2"
+									th:ng-if="'selectedStaff!=' + ${staf.staffId}"
+									th:text="${staf.technologyKnown}"></td>
+								<td class="border px-4 py-2"
+									th:ng-if="'selectedStaff==' + ${staf.staffId}"><textarea
+										class="shadow py-2 px-3" th:text="${staf.technologyKnown}"></textarea></td>
 							</tr>
 						</tbody>
 					</table>

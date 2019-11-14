@@ -4,6 +4,7 @@ atsApp.controller('adminHomeController', [
 
 			$scope.showStaffList = true;
 			$scope.staffs = "";
+			$scope.selectedStaff = null;
 
 			$scope.doSearchUser = function(username, email) {
 				if (!$scope.users) {
@@ -23,10 +24,19 @@ atsApp.controller('adminHomeController', [
 			$scope.doSearchStaff = function(staff) {
 				if (!$scope.staffs) {
 					return true;
-				} else if (staff.includes($scope.staffs)) {
+				} else if (staff.toLowerCase().includes(
+						$scope.staffs.toLowerCase())) {
 					return true;
 				} else {
 					return false;
+				}
+			}
+
+			$scope.doSelectStaff = function(id) {
+				if ($scope.selectedStaff == id) {
+					$scope.selectedStaff = null;
+				} else {
+					$scope.selectedStaff = id;
 				}
 			}
 		} ]);

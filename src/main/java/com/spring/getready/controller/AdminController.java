@@ -103,9 +103,15 @@ public class AdminController {
 	public ModelAndView staffService(@RequestParam(name = "staffname", required = false) String name,
 			@RequestParam(name = "field", required = false) String field,
 			@RequestParam(name = "technology", required = false) String technology,
-			@PathVariable("operation") String operation, ModelAndView modelView) throws FileException {
+			@RequestParam(name = "staffid", required = false) String id, @PathVariable("operation") String operation,
+			ModelAndView modelView) throws FileException {
 		if (operation.contentEquals("add")) {
 			staffService.addNewStaff(name, field, technology);
+		} else if (operation.contains("edit")) {
+			boolean isUpdated = staffService.editStaff(Integer.parseInt(id), name, field, technology);
+			if (isUpdated) {
+				modelView.addObject("message", "Staff detail updated");
+			}
 		}
 		modelView.setViewName("redirect:/admin/staff");
 		return modelView;
