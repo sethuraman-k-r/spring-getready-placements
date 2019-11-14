@@ -24,10 +24,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.getready.config.FilePropertyConfig;
 import com.spring.getready.interceptor.FileException;
+import com.spring.getready.model.CourseList;
 import com.spring.getready.model.StaffDetail;
 import com.spring.getready.model.UserDetail;
+import com.spring.getready.repository.CourseListRepository;
 import com.spring.getready.repository.StaffDetailRepository;
 import com.spring.getready.repository.UserDetailRepository;
+import com.spring.getready.services.CourseService;
 import com.spring.getready.services.StaffService;
 import com.spring.getready.services.UserService;
 
@@ -41,6 +44,9 @@ public class AdminController {
 	private StaffDetailRepository staffDetailRepository;
 
 	@Autowired
+	private CourseListRepository courseListRepository;
+
+	@Autowired
 	private FilePropertyConfig filePropertyConfig;
 
 	@Autowired
@@ -48,6 +54,9 @@ public class AdminController {
 
 	@Autowired
 	private StaffService staffService;
+
+	@Autowired
+	private CourseService courseService;
 
 	@RequestMapping(path = "/admin", method = RequestMethod.GET)
 	public ModelAndView redirectAdminHome(ModelAndView modelAndView) {
@@ -66,6 +75,11 @@ public class AdminController {
 		} else if (page.contentEquals("staff")) {
 			List<StaffDetail> staffDetails = staffDetailRepository.findAll();
 			model.addAttribute("staff", staffDetails);
+		} else if (page.contentEquals("course")) {
+			List<StaffDetail> staffDetails = staffDetailRepository.findAll();
+			model.addAttribute("staffDetails", staffDetails);
+			List<CourseList> courseDetails = courseListRepository.findAll();
+			model.addAttribute("course", courseDetails);
 		}
 		return "admin";
 	}
@@ -83,7 +97,7 @@ public class AdminController {
 					if (result) {
 						redirectAttributes.addFlashAttribute("message", "Users created successfully");
 					}
-					modelView.setViewName("redirect:/admin");
+					modelView.setViewName("redirect:/admin/users");
 				}
 			} catch (IOException io) {
 				throw new FileException("Error while upload users");
@@ -104,16 +118,27 @@ public class AdminController {
 			@RequestParam(name = "field", required = false) String field,
 			@RequestParam(name = "technology", required = false) String technology,
 			@RequestParam(name = "staffid", required = false) String id, @PathVariable("operation") String operation,
-			ModelAndView modelView) throws FileException {
+			ModelAndView modelView, RedirectAttributes redirectAttributes) throws FileException {
 		if (operation.contentEquals("add")) {
 			staffService.addNewStaff(name, field, technology);
 		} else if (operation.contains("edit")) {
 			boolean isUpdated = staffService.editStaff(Integer.parseInt(id), name, field, technology);
 			if (isUpdated) {
-				modelView.addObject("message", "Staff detail updated");
+				redirectAttributes.addFlashAttribute("message", "Staff detail updated");
 			}
 		}
 		modelView.setViewName("redirect:/admin/staff");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/course/add", method = RequestMethod.POST)
+	public ModelAndView courseService(@RequestParam(name = "coursename", required = false) String name,
+			@RequestParam(name = "field", required = false) String field,
+			@RequestParam(name = "staff", required = false) Integer staff,
+			@RequestParam(name = "support", required = false) List<Integer> support, ModelAndView modelView)
+			throws FileException {
+		courseService.addNewCourse(name, field, staff, support);
+		modelView.setViewName("redirect:/admin/course");
 		return modelView;
 	}
 

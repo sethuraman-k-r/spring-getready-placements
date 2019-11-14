@@ -1,0 +1,119 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<title>ATS - Users</title>
+</head>
+<body>
+	<div th:fragment="all-courses">
+		<div th:if="${message}"
+			class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
+			role="alert">
+			<strong class="font-bold">Success!!</strong> <span
+				class="block sm:inline" th:text="${message}"></span> <span
+				class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+		</div>
+		<div class="w-full flex flex-row-reverse mb-3">
+			<div class="inline-flex">
+				<button class="bg-gray-300 py-2 px-4 font-bold rounded-l"
+					title="Create new course"
+					ng-click="showCourseList = !showCourseList"
+					ng-class="{'bg-gray-500 text-white': !showCourseList, 'text-gray-800': showCourseList}">Create</button>
+				<button class="bg-gray-300 py-2 px-4 font-bold rounded-r"
+					title="Course details" ng-click="showCourseList = !showCourseList"
+					ng-class="{'bg-gray-500 text-white': showCourseList, 'text-gray-800': !showCourseList}">Show</button>
+			</div>
+		</div>
+		<div ng-if="!showCourseList">
+			<form class="w-full px-48" method="post"
+				th:action="@{/admin/course/add}">
+				<div class="flex flex-wrap -mx-3 mb-6">
+					<div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+						<label
+							class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+							COURSE NAME </label> <input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+							type="text" name="coursename" placeholder="Course name">
+					</div>
+					<div class="w-full md:w-1/2 px-3">
+						<label
+							class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+							Field </label> <input
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							type="text" name="field" placeholder="Computer Science">
+					</div>
+				</div>
+				<div class="flex flex-wrap -mx-3 mb-6">
+					<div class="w-full px-3">
+						<label
+							class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+							PRIMARY STAFF </label> <select name="staff" id="primary-staff"
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+							<option th:each="staff: ${staffDetails}"
+								th:text="${staff.staffName}" th:value="${staff.staffId}"></option>
+						</select>
+					</div>
+				</div>
+				<div class="flex flex-wrap -mx-3 mb-6">
+					<div class="w-full px-3">
+						<label
+							class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+							SUPPORTING STAFFS </label> <select name="support" id="support-staff"
+							multiple
+							class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+							<option th:each="staff: ${staffDetails}"
+								th:text="${staff.staffName}" th:value="${staff.staffId}"></option>
+						</select>
+					</div>
+				</div>
+				<button
+					class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					type="submit">Add Course</button>
+			</form>
+		</div>
+		<div ng-if="showCourseList">
+			<div class="w-full flex flex-row-reverse">
+				<div class="mb-4">
+					<input
+						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+						type="text" placeholder="Search here"
+						ng-keyup="updateCourse($event)">
+				</div>
+			</div>
+			<table class="table-fixed">
+				<thead>
+					<tr>
+						<th class="w-1 px-4 py-2">#</th>
+						<th class="w-3/12 px-4 py-2">Course Name</th>
+						<th class="w-3/12 px-4 py-2">Field</th>
+						<th class="w-3/12 px-4 py-2">Primary Staff</th>
+						<th class="w-4/12 px-4 py-2">Supporting Staffs</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:if="${course.size()==0}">
+						<td colspan="4" class="border px-4 py-2 text-center">No
+							course details found</td>
+					</tr>
+					<tr th:each="subject,itr: ${course}"
+						th:ng-if="'doSearchCourse(\'' + ${subject.courseName}  + '\', courses)'">
+						<td class="border px-4 py-2 text-center"
+							th:text="${itr.index + 1}"></td>
+						<td class="border px-4 py-2" th:text="${subject.courseName}"></td>
+						<td class="border px-4 py-2" th:text="${subject.courseField}"></td>
+						<td class="border px-4 py-2"
+							th:text="${subject.staffDetail.staffName}"></td>
+						<td class="border px-4 py-2 text-center"
+							th:unless="${subject.staffDetails.size()!=0}">-</td>
+						<td class="border px-4 py-2"
+							th:if="${subject.staffDetails.size() > 0}">
+							<ol class="list-decimal px-4 py-2">
+								<li th:each="staffs : ${subject.staffDetails}"
+									th:text="${staffs.staffName}"></li>
+							</ol>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>

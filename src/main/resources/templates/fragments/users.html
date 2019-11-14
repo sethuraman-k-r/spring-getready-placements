@@ -1,0 +1,84 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<title>ATS - Users</title>
+</head>
+<body>
+	<div th:fragment="all-users">
+		<div th:if="${message}"
+			class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
+			role="alert">
+			<strong class="font-bold">Success!!</strong> <span
+				class="block sm:inline" th:text="${message}"></span> <span
+				class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+		</div>
+		<div class="w-full flex flex-row-reverse">
+			<div class="inline-flex">
+				<form th:action="@{/admin/upload/users}" method="post"
+					enctype="multipart/form-data">
+					<input type="file" name="users" accept=".json"
+						class="bg-gray-300 p-1 rounded-l w-32" />
+					<button type="submit"
+						class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 font-bold rounded-none"
+						title="Upload users here">Upload</button>
+				</form>
+				<a th:href="@{../download/users}" target="_blank">
+					<button
+						class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 font-bold rounded-r"
+						title="Download template">Download</button>
+				</a>
+			</div>
+		</div>
+		<div class="w-full flex flex-row-reverse">
+			<div class="mb-4">
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					type="text" placeholder="Search here" ng-model="users">
+			</div>
+		</div>
+		<table class="table-fixed">
+			<thead>
+				<tr>
+					<th class="w-1/6 px-4 py-2">#</th>
+					<th class="w-1/6 px-4 py-2">Name</th>
+					<th class="w-2/6 px-4 py-2">Email</th>
+					<th class="w-1/6 px-4 py-2">Joined on</th>
+					<th class="w-1/6 px-4 py-2">Status</th>
+					<th class="w-1/6 px-4 py-2">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${users.size()==0}">
+					<td colspan="6" class="border px-4 py-2 text-center">No users
+						found</td>
+				</tr>
+				<tr th:each="user,itr: ${users}"
+					th:ng-if="'doSearchUser(\'' + ${user.username}  + '\',\'' + ${user.email} + '\')'">
+					<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
+					<td class="border px-4 py-2" th:text="${user.username}"></td>
+					<td class="border px-4 py-2" th:text="${user.email}"></td>
+					<td class="border px-4 py-2 text-center"
+						th:text="${#dates.format(user.createdOn, 'dd MMM yyyy')}"></td>
+					<td class="border px-4 py-2 text-center"
+						th:if="${user.isLocked}!=true">
+						<div class="inline bg-green-400 px-1 pl-4 rounded-full"></div>
+					</td>
+					<td class="border px-4 py-2 text-center"
+						th:if="${user.isLocked}==true">
+						<div class="inline bg-red-400 px-1 pl-4 rounded-full"></div>
+					</td>
+					<td class="border px-4 py-2 text-center">
+						<form method="post" th:action="@{/admin/user/reset}" class="mb-0">
+							<input type="hidden" name="user" th:value="${user.userId}" />
+							<button type="submit"
+								class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+								<img
+									src="https://upload.wikimedia.org/wikipedia/commons/f/f5/Reset_button.svg" />
+							</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
