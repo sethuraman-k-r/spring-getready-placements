@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,15 +25,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.getready.config.FilePropertyConfig;
 import com.spring.getready.interceptor.FileException;
+import com.spring.getready.model.AssignmentDetail;
 import com.spring.getready.model.CourseList;
 import com.spring.getready.model.StaffDetail;
 import com.spring.getready.model.UserDetail;
+import com.spring.getready.repository.AssignmentDetailRepository;
 import com.spring.getready.repository.CourseListRepository;
 import com.spring.getready.repository.StaffDetailRepository;
 import com.spring.getready.repository.UserDetailRepository;
+import com.spring.getready.services.AssignmentService;
 import com.spring.getready.services.CourseService;
 import com.spring.getready.services.StaffService;
 import com.spring.getready.services.UserService;
+import com.spring.getready.template.model.AssignmentTemplate;
 
 @Controller
 public class AdminController {
@@ -47,6 +52,9 @@ public class AdminController {
 	private CourseListRepository courseListRepository;
 
 	@Autowired
+	private AssignmentDetailRepository assignmentDetailRepository;
+
+	@Autowired
 	private FilePropertyConfig filePropertyConfig;
 
 	@Autowired
@@ -57,6 +65,9 @@ public class AdminController {
 
 	@Autowired
 	private CourseService courseService;
+
+	@Autowired
+	private AssignmentService assignmentService;
 
 	@RequestMapping(path = "/admin", method = RequestMethod.GET)
 	public ModelAndView redirectAdminHome(ModelAndView modelAndView) {
@@ -80,6 +91,13 @@ public class AdminController {
 			model.addAttribute("staffDetails", staffDetails);
 			List<CourseList> courseDetails = courseListRepository.findAll();
 			model.addAttribute("course", courseDetails);
+		} else if (page.contentEquals("assignment")) {
+			List<StaffDetail> staffDetails = staffDetailRepository.findAll();
+			model.addAttribute("staffDetails", staffDetails);
+			List<CourseList> courseDetails = courseListRepository.findAll();
+			model.addAttribute("courseDetails", courseDetails);
+			List<AssignmentDetail> assignmentDetails = assignmentDetailRepository.findAll();
+			model.addAttribute("assignment", assignmentDetails);
 		}
 		return "admin";
 	}
@@ -139,6 +157,16 @@ public class AdminController {
 			throws FileException {
 		courseService.addNewCourse(name, field, staff, support);
 		modelView.setViewName("redirect:/admin/course");
+		return modelView;
+	}
+
+	@RequestMapping(path = "/admin/assignment/create", method = RequestMethod.POST)
+	public ModelAndView assignmentService(@ModelAttribute AssignmentTemplate assignment, ModelAndView modelView)
+			throws FileException {
+		if (assignment != null) {
+			assignmentService.createAssignment(assignment);
+		}
+		modelView.setViewName("redirect:/admin/assignment");
 		return modelView;
 	}
 

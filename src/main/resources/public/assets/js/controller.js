@@ -9,6 +9,10 @@ atsApp.controller('adminHomeController', [
 			$scope.showCourseList = true;
 			$scope.courses = "";
 			$scope.selectedCourse = null;
+			
+			$scope.showAssignmentList = true;
+			$scope.assignments = "";
+			$scope.selectedAssignment = null;
 
 			$scope.doSearchUser = function(username, email) {
 				if (!$scope.users) {
@@ -59,4 +63,20 @@ atsApp.controller('adminHomeController', [
 				}
 			}
 
+			$scope.updateAssignment = function(event) {
+				$scope.assignments = event.target.value;
+			}
+			
+			$scope.doSearchAssignment = function(assignment) {
+				if (!$scope.assignments) {
+					return true;
+				} else if (assignment.toLowerCase().includes(
+						$scope.assignments.toLowerCase())) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			
 		} ]);
