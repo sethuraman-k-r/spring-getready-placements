@@ -38,9 +38,9 @@ public class DownloadController {
 	private FilePropertyConfig filePropertyConfig;
 
 	@RequestMapping(path = "/download/{file}", method = RequestMethod.GET)
-	public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String file,
+	public ResponseEntity<byte[]> downloadFile(@PathVariable String file,
 			@RequestParam(name = "id", required = false) Integer id, HttpServletRequest request)
-			throws FileNotFoundException {
+			throws FileNotFoundException, IOException {
 		Resource resource = null;
 		String originalFileName = null;
 		InputStreamResource streamResource = null;
@@ -66,12 +66,11 @@ public class DownloadController {
 
 		if (streamResource == null) {
 			String errorResponse = new String("{\"message\" : \"Request error\"}");
-			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
-					.body(new InputStreamResource(new FileInputStream(errorResponse)));
+			return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(errorResponse.getBytes());
 		} else {
 			return ResponseEntity.ok().contentType(MediaType.APPLICATION_OCTET_STREAM)
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + originalFileName + "\"")
-					.body(streamResource);
+					.body(streamResource.getInputStream().readAllBytes());
 		}
 	}
 
