@@ -6,7 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +21,15 @@ import com.spring.getready.interceptor.FileException;
 import com.spring.getready.model.AssignmentDetail;
 import com.spring.getready.model.CourseList;
 import com.spring.getready.model.StaffDetail;
+import com.spring.getready.model.SubmissionDetail;
 import com.spring.getready.model.UploadFile;
+import com.spring.getready.model.UserDetail;
 import com.spring.getready.repository.AssignmentDetailRepository;
 import com.spring.getready.repository.CourseListRepository;
 import com.spring.getready.repository.StaffDetailRepository;
+import com.spring.getready.repository.SubmissionDetailRepository;
 import com.spring.getready.repository.UploadFileRepository;
+import com.spring.getready.repository.UserDetailRepository;
 import com.spring.getready.template.model.AssignmentTemplate;
 
 @Service
@@ -29,7 +37,7 @@ public class AssignmentService {
 
 	@Autowired
 	private FilePropertyConfig filePropertyConfig;
-	
+
 	@Autowired
 	private CourseListRepository courseListRepository;
 
@@ -38,6 +46,12 @@ public class AssignmentService {
 
 	@Autowired
 	private UploadFileRepository uploadFileRepository;
+
+	@Autowired
+	private UserDetailRepository userDetailRepository;
+
+	@Autowired
+	private SubmissionDetailRepository submissionDetailRepository;
 
 	public boolean createAssignment(AssignmentTemplate assignment) throws FileException {
 		boolean result = false;
@@ -76,6 +90,28 @@ public class AssignmentService {
 		result = assignmentDetailRepository.save(assignmentDetail) != null;
 
 		return result;
+	}
+
+	public Map<String, Object> checkPendingAssignment(String uuid) {
+		Map<String, Object> assignmentInfo = new HashMap<String, Object>();
+		UserDetail userDetail = userDetailRepository.findByUserUuidEquals(uuid);
+		if (userDetail != null) {
+			List<SubmissionDetail> submissionDetails = submissionDetailRepository.findByUserDetailEquals(userDetail);
+			assignmentInfo.put("submissions", submissionDetails);
+			if (submissionDetails.size() > 0) {
+				List<AssignmentDetail> assignments = new ArrayList<AssignmentDetail>();
+				for (SubmissionDetail submissionDetail : submissionDetails) {
+					assignments.add(submissionDetail.getAssignmentDetail());
+				}
+				List<AssignmentDetail> assignmentDetails = assignmentDetailRepository
+						.findNonSubmittedAssignments(assignments);
+				assignmentInfo.put("assignments", assignmentDetails);
+			} else {
+				List<AssignmentDetail> assignmentDetails = assignmentDetailRepository.findByIsDeletedFalse();
+				assignmentInfo.put("assignments", assignmentDetails);
+			}
+		}
+		return assignmentInfo;
 	}
 
 }

@@ -14,4 +14,6 @@ public interface UserDetailRepository extends JpaRepository<UserDetail, Integer>
 	
 	List<UserDetail> findByEmailNot(String email);
 	
+	UserDetail findByUserUuidEquals(String uuid);
+	
 }

@@ -9,7 +9,7 @@ atsApp.controller('adminHomeController', [
 			$scope.showCourseList = true;
 			$scope.courses = "";
 			$scope.selectedCourse = null;
-			
+
 			$scope.showAssignmentList = true;
 			$scope.assignments = "";
 			$scope.selectedAssignment = null;
@@ -66,7 +66,7 @@ atsApp.controller('adminHomeController', [
 			$scope.updateAssignment = function(event) {
 				$scope.assignments = event.target.value;
 			}
-			
+
 			$scope.doSearchAssignment = function(assignment) {
 				if (!$scope.assignments) {
 					return true;
@@ -78,5 +78,9 @@ atsApp.controller('adminHomeController', [
 				}
 			}
 
-			
 		} ]);
+
+atsApp.controller('userHomeController', [ "$scope", function($scope) {
+	$scope.showAssignmentList = false;
+} ]);
+;

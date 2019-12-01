@@ -51,16 +51,16 @@
 			</div>
 
 			<div th:if="${users}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/users :: all-users"></div>
+				<div th:replace="fragments/admin/users :: all-users"></div>
 			</div>
 			<div th:if="${staff}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/staffs :: all-staffs"></div>
+				<div th:replace="fragments/admin/staffs :: all-staffs"></div>
 			</div>
 			<div th:if="${course}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/courses :: all-courses"></div>
+				<div th:replace="fragments/admin/courses :: all-courses"></div>
 			</div>
 			<div th:if="${assignment}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/assignments :: all-assignments"></div>
+				<div th:replace="fragments/admin/assignments :: all-assignments"></div>
 			</div>
 
 		</div>

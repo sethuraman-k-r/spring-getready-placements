@@ -1,6 +1,8 @@
 package com.spring.getready.services;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class CustomAuthProvider implements AuthenticationProvider {
 			} else {
 				grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 			}
+			userDetail.setLastLoginOn(new Timestamp(new Date().getTime()));
+			userDetailRepository.save(userDetail);
 			return new UsernamePasswordAuthenticationToken(username, password, grantedAuthorities);
 		} else {
 			return null;

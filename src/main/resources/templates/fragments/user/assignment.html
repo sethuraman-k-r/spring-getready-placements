@@ -1,0 +1,111 @@
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+<title>ATS - Users</title>
+</head>
+<body>
+	<div th:fragment="all-assignment">
+		<div th:if="${message}"
+			class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 mb-3 rounded relative"
+			role="alert">
+			<strong class="font-bold">Success!!</strong> <span
+				class="block sm:inline" th:text="${message}"></span> <span
+				class="absolute top-0 bottom-0 right-0 px-4 py-3"> </span>
+		</div>
+		<div class="w-full flex flex-row-reverse">
+			<div class="inline-flex">
+				<button class="bg-gray-300 py-2 px-4 font-bold rounded-l"
+					title="Create new course"
+					ng-click="showAssignmentList = !showAssignmentList"
+					ng-class="{'bg-gray-500 text-white': !showAssignmentList, 'text-gray-800': showAssignmentList}">Pending</button>
+				<button class="bg-gray-300 py-2 px-4 font-bold rounded-r"
+					title="Course details"
+					ng-click="showAssignmentList = !showAssignmentList"
+					ng-class="{'bg-gray-500 text-white': showAssignmentList, 'text-gray-800': !showAssignmentList}">Completed</button>
+			</div>
+		</div>
+		<table class="table-fixed" ng-if="!showAssignmentList">
+			<thead>
+				<tr>
+					<th class="w-1/6 px-4 py-2">#</th>
+					<th class="w-1/6 px-4 py-2">Assignment Name</th>
+					<th class="w-2/6 px-4 py-2">Description</th>
+					<th class="w-1/6 px-4 py-2">Deadline</th>
+					<th class="w-1/6 px-4 py-2">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${assignment.assignments.size()==0}">
+					<td colspan="6" class="border px-4 py-2 text-center">No
+						assignments found</td>
+				</tr>
+				<tr th:each="assignment,itr: ${assignment.assignments}"
+					th:classappend="${assignment.deadline.after(#dates.createNow())} ? '' : 'bg-red-200'">
+					<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
+					<td class="border px-4 py-2" th:if="${assignment.uploadFile!=null}">
+						<a
+						th:href="@{../download/attachment?id=} + ${assignment.uploadFile.fileId}"
+						th:text="${assignment.assignmentName}" class="underline"> </a>
+					</td>
+					<td class="border px-4 py-2" th:text="${assignment.assignmentName}"
+						th:if="${assignment.uploadFile==null}"></td>
+					<td class="border px-4 py-2"
+						th:text="${assignment.assignmentDescription}"></td>
+					<td class="border px-4 py-2 text-center"
+						th:text="${#dates.format(assignment.deadline, 'dd MMM yyyy')}"></td>
+					<td class="border px-4 py-2 text-center">
+						<form th:action="@{/home/upload/submission}" method="POST"
+							enctype="multipart/form-data">
+							<input
+								class="w-64 bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+								name="file" type="file"> <input type="hidden"
+								name="assignmentId" th:value="${assignment.assignmentId}" />
+							<button
+								class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+								type="submit">Upload</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="table-fixed" ng-if="showAssignmentList">
+			<thead>
+				<tr>
+					<th class="w-1/6 px-4 py-2">#</th>
+					<th class="w-1/6 px-4 py-2">Assignment Name</th>
+					<th class="w-2/6 px-4 py-2">Description</th>
+					<th class="w-1/6 px-4 py-2">Submitted on</th>
+					<th class="w-1/6 px-4 py-2">Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:if="${assignment.submissions.size()==0}">
+					<td colspan="6" class="border px-4 py-2 text-center">No
+						submissions found</td>
+				</tr>
+				<tr th:each="submission,itr: ${assignment.submissions}"
+					th:classappend="${submission.submittedOn.before(submission.assignmentDetail.deadline)} ? 'bg-green-200' : 'bg-red-200'">
+					<td class="border px-4 py-2 text-center" th:text="${itr.index + 1}"></td>
+					<td class="border px-4 py-2"
+						th:if="${submission.assignmentDetail.uploadFile!=null}"><a
+						th:href="@{../download/attachment?id=} + ${submission.assignmentDetail.uploadFile.fileId}"
+						th:text="${submission.assignmentDetail.assignmentName}"
+						class="underline"> </a></td>
+					<td class="border px-4 py-2"
+						th:text="${submission.assignmentDetail.assignmentName}"
+						th:if="${submission.assignmentDetail.uploadFile==null}"></td>
+					<td class="border px-4 py-2"
+						th:text="${submission.assignmentDetail.assignmentDescription}"></td>
+					<td class="border px-4 py-2 text-center"
+						th:text="${#dates.format(submission.submittedOn, 'dd MMM yyyy')}"></td>
+					<td class="border px-4 py-2 text-center"><a
+						th:href="@{../download/attachment?id=} + ${submission.uploadFile.fileId}">
+							<button
+								class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+								type="button">Download</button>
+					</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+</html>
