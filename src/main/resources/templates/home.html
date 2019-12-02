@@ -56,17 +56,9 @@
 			<div th:if="${profile}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<div th:replace="fragments/user/profile :: profile-info"></div>
 			</div>
-
-			<!-- 
-			<div th:if="${staff}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/staffs :: all-staffs"></div>
+			<div th:if="${academy}" class="w-3/4 h-auto p-5 border-2 rounded">
+				<div th:replace="fragments/user/academy :: academy-details"></div>
 			</div>
-			<div th:if="${course}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/courses :: all-courses"></div>
-			</div>
-			<div th:if="${assignment}" class="w-3/4 h-auto p-5 border-2 rounded">
-				<div th:replace="fragments/assignments :: all-assignments"></div>
-			</div> -->
 
 		</div>
 	</div>

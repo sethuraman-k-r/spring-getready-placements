@@ -84,6 +84,7 @@ atsApp.controller('userHomeController', [
 		"$scope",
 		function($scope) {
 			$scope.showAssignmentList = false;
+			$scope.showAcademy = false;
 
 			$scope.selectPicture = function() {
 				var pictureSelector = angular.element(document

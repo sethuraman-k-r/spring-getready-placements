@@ -1,16 +1,13 @@
 package com.spring.getready.controller;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -44,7 +41,6 @@ public class DownloadController {
 	public ResponseEntity<byte[]> downloadFile(@PathVariable String file,
 			@RequestParam(name = "id", required = false) Integer id, HttpServletRequest request)
 			throws FileNotFoundException, IOException {
-		ByteArrayOutputStream bAOS = new ByteArrayOutputStream();
 		Resource resource = null;
 		String originalFileName = null;
 		InputStreamResource streamResource = null;

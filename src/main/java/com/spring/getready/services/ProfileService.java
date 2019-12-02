@@ -14,6 +14,7 @@ import com.spring.getready.model.ProfileInfo;
 import com.spring.getready.model.UploadFile;
 import com.spring.getready.model.UserDetail;
 import com.spring.getready.repository.ProfileInfoRepository;
+import com.spring.getready.repository.UserDetailRepository;
 import com.spring.getready.template.model.ProfileTemplate;
 
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class ProfileService {
 
 	@Autowired
 	private FilePropertyConfig filePropertyConfig;
+	
+	@Autowired
+	private UserDetailRepository userDetailRepository;
 
 	public boolean updateProfile(ProfileTemplate profileTemplate, UserDetail userDetail) {
 		boolean result = false;
@@ -40,7 +44,7 @@ public class ProfileService {
 			profileInfo.setGender(profileTemplate.getGender().toString());
 			profileInfo.setHometown(profileTemplate.getHometown());
 			profileInfo.setReligion(profileTemplate.getReligion());
-			if (profileTemplate.getProfile() != null) {
+			if (!profileTemplate.getProfile().isEmpty()) {
 				String fileName = new Date().getTime() + "_" + profileTemplate.getProfile().getOriginalFilename();
 				Path path = Paths.get(new File(filePropertyConfig.getFilePath() + File.separator + fileName).toURI());
 				try {
@@ -57,5 +61,28 @@ public class ProfileService {
 			result = profileInfoRepository.save(profileInfo) != null;
 		}
 		return result;
+	}
+	
+	
+	@SuppressWarnings("deprecation")
+	public ProfileInfo getProfileDetails(String uuid) {
+		ProfileInfo profileInfo = null;
+		UserDetail userDetail = userDetailRepository.findByUserUuidEquals(uuid);
+		if (userDetail != null) {
+			profileInfo = profileInfoRepository.findByUserDetailEquals(userDetail);
+			if (profileInfo == null) {
+				profileInfo = new ProfileInfo();
+				profileInfo.setAboutUser("Describe yourself");
+				profileInfo.setAddressUser("Address here");
+				profileInfo.setDateOfBirth(new Date(1991, 1, 01));
+				profileInfo.setGender("M");
+				profileInfo.setHometown("Chennai");
+				profileInfo.setReligion("Hindu");
+				profileInfo.setUploadFile(null);
+				profileInfo.setUserDetail(userDetail);
+				profileInfoRepository.save(profileInfo);
+			}
+		}
+		return profileInfo;
 	}
 }

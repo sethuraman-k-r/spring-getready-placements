@@ -21,7 +21,7 @@
 							th:if="${profile.uploadFile}==null" ng-click="selectPicture()" />
 					</div>
 					<div>
-						<img th:src="@{/assets/img/use.svg}"
+						<img th:src="@{/download/attachment?id=} + ${profile.uploadFile.fileId}"
 							class="border w-48 rounded-full p-4 mx-auto hover:bg-gray-200 cursor-pointer"
 							th:if="${profile.uploadFile}!=null" ng-click="selectPicture()" />
 					</div>

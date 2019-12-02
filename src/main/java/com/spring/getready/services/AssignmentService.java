@@ -20,15 +20,11 @@ import com.spring.getready.config.FilePropertyConfig;
 import com.spring.getready.interceptor.FileException;
 import com.spring.getready.model.AssignmentDetail;
 import com.spring.getready.model.CourseList;
-import com.spring.getready.model.ProfileInfo;
-import com.spring.getready.model.StaffDetail;
 import com.spring.getready.model.SubmissionDetail;
 import com.spring.getready.model.UploadFile;
 import com.spring.getready.model.UserDetail;
 import com.spring.getready.repository.AssignmentDetailRepository;
 import com.spring.getready.repository.CourseListRepository;
-import com.spring.getready.repository.ProfileInfoRepository;
-import com.spring.getready.repository.StaffDetailRepository;
 import com.spring.getready.repository.SubmissionDetailRepository;
 import com.spring.getready.repository.UploadFileRepository;
 import com.spring.getready.repository.UserDetailRepository;
@@ -54,10 +50,7 @@ public class AssignmentService {
 
 	@Autowired
 	private SubmissionDetailRepository submissionDetailRepository;
-
-	@Autowired
-	private ProfileInfoRepository profileInfoRepository;
-
+	
 	public boolean createAssignment(AssignmentTemplate assignment) throws FileException {
 		boolean result = false;
 		Date date = new Date();
@@ -118,26 +111,4 @@ public class AssignmentService {
 		}
 		return assignmentInfo;
 	}
-
-	public ProfileInfo getProfileDetails(String uuid) {
-		ProfileInfo profileInfo = null;
-		UserDetail userDetail = userDetailRepository.findByUserUuidEquals(uuid);
-		if (userDetail != null) {
-			profileInfo = profileInfoRepository.findByUserDetailEquals(userDetail);
-			if (profileInfo == null) {
-				profileInfo = new ProfileInfo();
-				profileInfo.setAboutUser("Describe yourself");
-				profileInfo.setAddressUser("Address here");
-				profileInfo.setDateOfBirth(new Date(1991, 1, 01));
-				profileInfo.setGender("M");
-				profileInfo.setHometown("Chennai");
-				profileInfo.setReligion("Hindu");
-				profileInfo.setUploadFile(null);
-				profileInfo.setUserDetail(userDetail);
-				profileInfoRepository.save(profileInfo);
-			}
-		}
-		return profileInfo;
-	}
-
 }

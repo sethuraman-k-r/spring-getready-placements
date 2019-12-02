@@ -25,10 +25,12 @@ import com.spring.getready.interceptor.FileException;
 import com.spring.getready.model.UploadFile;
 import com.spring.getready.model.UserDetail;
 import com.spring.getready.repository.UserDetailRepository;
+import com.spring.getready.services.AcademicService;
 import com.spring.getready.services.AssignmentService;
 import com.spring.getready.services.ProfileService;
 import com.spring.getready.services.SubmissionService;
 import com.spring.getready.services.UploadFileService;
+import com.spring.getready.template.model.AcademicTemplate;
 import com.spring.getready.template.model.ProfileTemplate;
 
 @Controller
@@ -52,6 +54,9 @@ public class HomeController {
 	@Autowired
 	private ProfileService profileService;
 
+	@Autowired
+	private AcademicService academicService;
+
 	@RequestMapping(path = "/home", method = RequestMethod.GET)
 	public ModelAndView redirectToHome(ModelAndView modelAndView) {
 		modelAndView.setViewName("redirect:/home/assignment");
@@ -60,13 +65,14 @@ public class HomeController {
 
 	@RequestMapping(path = "/home/{page}", method = RequestMethod.GET)
 	public String getHome(@PathVariable(name = "page", required = false) String page, Model model) {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		UserDetail userDetail = userDetailRepository.findByEmailEquals(username);
+		UserDetail userDetail = getCurrentUser();
 		model.addAttribute("username", userDetail.getUsername());
 		if (page.contentEquals("assignment")) {
 			model.addAttribute("assignment", assignmentService.checkPendingAssignment(userDetail.getUserUuid()));
 		} else if (page.contentEquals("profile")) {
-			model.addAttribute("profile", assignmentService.getProfileDetails(userDetail.getUserUuid()));
+			model.addAttribute("profile", profileService.getProfileDetails(userDetail.getUserUuid()));
+		} else if (page.contentEquals("academy")) {
+			model.addAttribute("academy", academicService.getAcademicDetails(userDetail.getUserUuid()));
 		}
 		return "home";
 	}
@@ -75,8 +81,7 @@ public class HomeController {
 	public ModelAndView upload(@RequestParam("file") MultipartFile file,
 			@RequestParam("assignmentId") Integer assignmentId, ModelAndView modelView,
 			RedirectAttributes redirectAttributes) throws FileException {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		UserDetail userDetail = userDetailRepository.findByEmailEquals(username);
+		UserDetail userDetail = getCurrentUser();
 		if (file != null) {
 			String fileName = new Date().getTime() + "_" + file.getOriginalFilename();
 			Path path = Paths.get(new File(filePropertyConfig.getFilePath() + File.separator + fileName).toURI());
@@ -97,17 +102,46 @@ public class HomeController {
 		return modelView;
 	}
 
-	@RequestMapping(path = "/home/update/profile", method = RequestMethod.POST)
-	public ModelAndView updateProfile(@ModelAttribute ProfileTemplate profile, ModelAndView modelView,
+	@RequestMapping(path = "/home/update/{section}", method = RequestMethod.POST)
+	public ModelAndView updateProfile(@PathVariable(name = "section", required = false) String section,
+			@ModelAttribute ProfileTemplate profile, @ModelAttribute AcademicTemplate academy, ModelAndView modelView,
 			RedirectAttributes redirectAttributes) {
+		UserDetail userDetail = getCurrentUser();
+		if (section.contentEquals("profile")) {
+			boolean result = profileService.updateProfile(profile, userDetail);
+			if (result) {
+				redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
+			}
+			modelView.setViewName("redirect:/home/profile");
+		} else if (section.contentEquals("academy")) {
+			boolean result = academicService.addAcademicDetails(academy, userDetail.getUserUuid());
+			if (result) {
+				redirectAttributes.addFlashAttribute("message", "Academic details successfully added");
+			}
+			modelView.setViewName("redirect:/home/academy");
+		}
+		return modelView;
+	}
+
+	@RequestMapping(path = "/home/delete/{section}", method = RequestMethod.POST)
+	public ModelAndView deleteDetails(@PathVariable(name = "section", required = false) String section,
+			@RequestParam(name = "academy_id", required = false) Integer academicId, ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		UserDetail userDetail = getCurrentUser();
+		if (section.contentEquals("academy")) {
+			boolean result = academicService.deleteAcademicDetails(academicId, userDetail.getUserUuid());
+			if (result) {
+				redirectAttributes.addFlashAttribute("message", "Academic details updated successfully");
+			}
+			modelView.setViewName("redirect:/home/academy");
+		}
+		return modelView;
+	}
+
+	public UserDetail getCurrentUser() {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		UserDetail userDetail = userDetailRepository.findByEmailEquals(username);
-		boolean result = profileService.updateProfile(profile, userDetail);
-		if (result) {
-			redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
-		}
-		modelView.setViewName("redirect:/home/profile");
-		return modelView;
+		return userDetail;
 	}
 
 }
