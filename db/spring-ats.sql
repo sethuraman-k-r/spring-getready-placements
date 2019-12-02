@@ -351,7 +351,7 @@ CREATE TABLE public.profile_info (
     gender "char",
     hometown character varying(15),
     religion character varying(10),
-    profile_picture integer NOT NULL
+    profile_picture integer
 );
 
 
@@ -626,7 +626,7 @@ ALTER SEQUENCE public.submission_details_user_ref_seq OWNED BY public.submission
 
 CREATE TABLE public.upload_files (
     file_id integer NOT NULL,
-    file_name character varying(50),
+    file_name character varying(100),
     file_original_name character varying(50),
     uploaded_on timestamp without time zone,
     last_access_on timestamp without time zone,
@@ -967,6 +967,7 @@ ALTER TABLE ONLY public.user_group ALTER COLUMN group_id SET DEFAULT nextval('pu
 --
 
 COPY public.academic_details (academic_id, academic_name, start_year, end_year, description, user_ref) FROM stdin;
+1	George School	2000	2010	\N	6
 \.
 
 
@@ -976,7 +977,7 @@ COPY public.academic_details (academic_id, academic_name, start_year, end_year, 
 
 COPY public.assignment_details (assignment_id, assignment_name, course_ref, assignment_description, deadline, reference_file_ref, is_deleted, created_on, created_by) FROM stdin;
 2	Sample	30	Sample Desc	2019-11-30 05:30:00	2	f	2019-11-16 12:32:14.884	\N
-3	RDBMS	30	Database Mgmt	2019-11-24 05:30:00	3	f	2019-11-16 17:54:29.81	\N
+3	RDBMS	30	Database Mgmt	2019-12-24 05:30:00	3	f	2019-11-16 17:54:29.81	\N
 \.
 
 
@@ -1019,6 +1020,7 @@ COPY public.family_details (family_id, father_name, father_occupation, mother_na
 --
 
 COPY public.profile_info (profile_id, user_ref, about_user, address_user, date_of_birth, gender, hometown, religion, profile_picture) FROM stdin;
+1	6	My name is Peter Joh	Address here	3891-02-01	M	Mumbai	Hindu	10
 \.
 
 
@@ -1048,6 +1050,8 @@ COPY public.staff_details (staff_id, staff_name, field, technology_known) FROM s
 --
 
 COPY public.submission_details (submission_id, assignment_ref, submission_file_ref, submitted_on, user_ref) FROM stdin;
+1	2	4	2019-12-01 22:15:01.605	6
+2	3	5	2019-12-01 22:37:23.302	6
 \.
 
 
@@ -1059,6 +1063,13 @@ COPY public.upload_files (file_id, file_name, file_original_name, uploaded_on, l
 1	1573887676602_spec.yaml	spec.yaml	2019-11-16 12:31:16.658	\N	f
 2	1573887734884_spec.yaml	spec.yaml	2019-11-16 12:32:14.884	\N	f
 3	1573907069810_Db.zip	Db.zip	2019-11-16 17:54:29.862	\N	f
+4	1575218701440_decoding-web-security---digicert-webinar.pdf	decoding-web-security---digicert-webinar.pdf	2019-12-01 22:15:01.452	\N	f
+5	1575220043108_Diamond-Sunset.svg	Diamond-Sunset.svg	2019-12-01 22:37:23.118	\N	f
+6	1575299580933_rio_16.jpg	rio_16.jpg	2019-12-02 20:43:00.937	\N	f
+7	1575299749709_		2019-12-02 20:45:49.711	\N	f
+8	1575299809270_		2019-12-02 20:46:49.271	\N	f
+9	1575299839897_		2019-12-02 20:47:19.897	\N	f
+10	1575299874454_rio_16.jpg	rio_16.jpg	2019-12-02 20:47:54.456	\N	f
 \.
 
 
@@ -1067,11 +1078,10 @@ COPY public.upload_files (file_id, file_name, file_original_name, uploaded_on, l
 --
 
 COPY public.user_details (user_id, username, password, email, user_uuid, created_on, last_login_on, is_locked, group_ref, family_ref) FROM stdin;
-1	Admin	$2a$10$aD1pF5ELLrAWBoXRyY1rIOeGew2HEpXrCqG5JbAT0lPSQg9kuDf7G	admin@spring.ats	a017f47c-f75a-3d39-a3a4-ac2ba9d9f215	2019-11-10 18:50:47.805134	\N	f	1	\N
-6	Peter	$2a$10$JcwAI26zxj3lFYMcPMhVC.8C2fF5fdPYIw6BH8aKUuKJ4FjEabB8u	peter@ats.com	e9f6cb22-8227-32f9-8ae7-a083769c901c	2019-11-12 23:21:53.47	\N	f	3	\N
 7	Tony	$2a$10$X3Y9/UDeC4zakr5PTKeeOefVGhLE5rzFDMC8lvLTkbtx4kiN9KFEi	tony@ats.com	294c6ae3-b420-3e8e-a5f4-940fc98fa545	2019-11-12 23:21:53.47	\N	f	2	\N
 8	Manu	$2a$10$xlqWB3RUlvkbnHA9mZuB/e7Ib50tgstkhrGGwf1CyQEJxKkWaT0Uq	manu@ats.com	2fe2c5ec-6d75-30e8-8182-ac9166604fa6	2019-11-12 23:21:53.47	\N	f	3	\N
 9	Max	$2a$10$yEd8/l9rFAqi2GkQhweUge7bKzU1oezWdUoWEKEWQZx0F7eCUIjpG	max@ats.com	29e05aa6-1c02-32cb-be3c-04202a8e39d4	2019-11-12 23:21:53.47	\N	f	3	\N
+1	Admin	$2a$10$aD1pF5ELLrAWBoXRyY1rIOeGew2HEpXrCqG5JbAT0lPSQg9kuDf7G	admin@spring.ats	a017f47c-f75a-3d39-a3a4-ac2ba9d9f215	2019-11-10 18:50:47.805134	2019-12-01 21:19:00.171	f	1	\N
 3	John	$2a$10$AiK2zW/I8xUWtvhncK5DsOUhNJBrGY0ZVeW9oplHkGpEIljfXjd6m	john@ats.com	daee4ea2-9858-394d-9471-f47b2efe8b97	2019-11-12 23:18:24.857	\N	f	2	\N
 10	Victoria	$2a$10$dvHFajzzmWAkyEh/2PhXGe.CkURfskESeVkIoU6yDb9O5noAHprRy	victoria@ats.com	afde068f-294a-3acf-aa7c-2ad748ebc893	2019-11-13 19:28:51.111	\N	f	4	\N
 11	Ana	$2a$10$/thRUKGx4vldgwz.xEeJxu7WorXxAnbsRcy9eR63KTbKI9GZ8BbF6	ana@ats.com	b010404a-7cd1-3899-80e9-ff00ca7d3a20	2019-11-13 19:28:51.111	\N	f	5	\N
@@ -1086,6 +1096,7 @@ COPY public.user_details (user_id, username, password, email, user_uuid, created
 2	George	$2a$10$ENAad3dXM9eb792dWpO8/uNfM2M1suowUAU2uvUDlzUxe5UwPo/Mq	george@ats.com	fd4d91d8-4dc0-3c3d-8043-ea69ef7a19a1	2019-11-12 23:18:24.857	\N	f	2	\N
 4	Steve	$2a$10$/Q9Sk3SJwi98l2qpOYwcjuXYUJqkyEtgWu8m9umjpS1.0zzw0pNO.	steve@ats.com	c5198f4d-bf7d-374f-ad00-fd6883979539	2019-11-12 23:18:24.857	\N	f	2	\N
 5	Stark	$2a$10$lcpQ6v4JVNWSFg.uYiLr0eKWNMaoBw1qgpQa/Ddtq2.SAeus2YdXe	stark@ats.com	68825a9c-27bd-34b3-8f4c-9ea1e796f5bc	2019-11-12 23:18:24.857	\N	f	2	\N
+6	Peter	$2a$10$JcwAI26zxj3lFYMcPMhVC.8C2fF5fdPYIw6BH8aKUuKJ4FjEabB8u	peter@ats.com	e9f6cb22-8227-32f9-8ae7-a083769c901c	2019-11-12 23:21:53.47	2019-12-02 20:36:59.89	f	3	\N
 20	Jessica	$2a$10$CuXt4FEismQGZeFNW9m6OeYDbYKw4n8UPYgGrT5acJgdRKeDfZvsC	jessica@ats.com	645551ba-e12c-3b6a-9f77-2cf8a2b34638	2019-11-14 19:57:04.373	\N	f	5	\N
 21	Sergey	$2a$10$Wtqf7k.pFaj7bI4dltVsaeOGBwMiP.PoGBypvukWRtBCedke9J3aq	sergey@ats.com	750a486c-ec5b-348c-a576-6c6cbce62187	2019-11-14 19:59:40.055	\N	f	6	\N
 \.
@@ -1109,7 +1120,7 @@ COPY public.user_group (group_id, group_name, short_group, is_active) FROM stdin
 -- Name: academic_details_academic_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.academic_details_academic_id_seq', 1, false);
+SELECT pg_catalog.setval('public.academic_details_academic_id_seq', 2, true);
 
 
 --
@@ -1186,7 +1197,7 @@ SELECT pg_catalog.setval('public.family_info_family_id_seq', 1, false);
 -- Name: profile_info_profile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.profile_info_profile_id_seq', 1, false);
+SELECT pg_catalog.setval('public.profile_info_profile_id_seq', 2, true);
 
 
 --
@@ -1242,7 +1253,7 @@ SELECT pg_catalog.setval('public.submission_details_submission_file_ref_seq', 1,
 -- Name: submission_details_submission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.submission_details_submission_id_seq', 1, false);
+SELECT pg_catalog.setval('public.submission_details_submission_id_seq', 2, true);
 
 
 --
@@ -1256,7 +1267,7 @@ SELECT pg_catalog.setval('public.submission_details_user_ref_seq', 1, false);
 -- Name: upload_files_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.upload_files_file_id_seq', 3, true);
+SELECT pg_catalog.setval('public.upload_files_file_id_seq', 10, true);
 
 
 --
