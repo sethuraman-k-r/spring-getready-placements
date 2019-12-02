@@ -80,7 +80,17 @@ atsApp.controller('adminHomeController', [
 
 		} ]);
 
-atsApp.controller('userHomeController', [ "$scope", function($scope) {
-	$scope.showAssignmentList = false;
-} ]);
+atsApp.controller('userHomeController', [
+		"$scope",
+		function($scope) {
+			$scope.showAssignmentList = false;
+
+			$scope.selectPicture = function() {
+				var pictureSelector = angular.element(document
+						.querySelector("input[name=profile]"))[0];
+				if (pictureSelector) {
+					pictureSelector.click();
+				}
+			}
+		} ]);
 ;

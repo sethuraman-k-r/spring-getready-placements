@@ -53,6 +53,9 @@
 			<div th:if="${assignment}" class="w-3/4 h-auto p-5 border-2 rounded">
 				<div th:replace="fragments/user/assignment :: all-assignment"></div>
 			</div>
+			<div th:if="${profile}" class="w-3/4 h-auto p-5 border-2 rounded">
+				<div th:replace="fragments/user/profile :: profile-info"></div>
+			</div>
 
 			<!-- 
 			<div th:if="${staff}" class="w-3/4 h-auto p-5 border-2 rounded">

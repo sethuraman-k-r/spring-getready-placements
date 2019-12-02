@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,8 +26,10 @@ import com.spring.getready.model.UploadFile;
 import com.spring.getready.model.UserDetail;
 import com.spring.getready.repository.UserDetailRepository;
 import com.spring.getready.services.AssignmentService;
+import com.spring.getready.services.ProfileService;
 import com.spring.getready.services.SubmissionService;
 import com.spring.getready.services.UploadFileService;
+import com.spring.getready.template.model.ProfileTemplate;
 
 @Controller
 public class HomeController {
@@ -46,6 +49,9 @@ public class HomeController {
 	@Autowired
 	private UploadFileService uploadFileService;
 
+	@Autowired
+	private ProfileService profileService;
+
 	@RequestMapping(path = "/home", method = RequestMethod.GET)
 	public ModelAndView redirectToHome(ModelAndView modelAndView) {
 		modelAndView.setViewName("redirect:/home/assignment");
@@ -59,6 +65,8 @@ public class HomeController {
 		model.addAttribute("username", userDetail.getUsername());
 		if (page.contentEquals("assignment")) {
 			model.addAttribute("assignment", assignmentService.checkPendingAssignment(userDetail.getUserUuid()));
+		} else if (page.contentEquals("profile")) {
+			model.addAttribute("profile", assignmentService.getProfileDetails(userDetail.getUserUuid()));
 		}
 		return "home";
 	}
@@ -86,6 +94,19 @@ public class HomeController {
 				throw new FileException("Error while submitting an assignment");
 			}
 		}
+		return modelView;
+	}
+
+	@RequestMapping(path = "/home/update/profile", method = RequestMethod.POST)
+	public ModelAndView updateProfile(@ModelAttribute ProfileTemplate profile, ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		UserDetail userDetail = userDetailRepository.findByEmailEquals(username);
+		boolean result = profileService.updateProfile(profile, userDetail);
+		if (result) {
+			redirectAttributes.addFlashAttribute("message", "Profile updated successfully");
+		}
+		modelView.setViewName("redirect:/home/profile");
 		return modelView;
 	}
 
