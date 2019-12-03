@@ -11,5 +11,7 @@ public class ParentsTemplate {
 	private String fatherOccupation;
 	private String motherName;
 	private String motherOccupation;
-	
+	private String siblingName;
+	private String siblingOccupation;
+
 }

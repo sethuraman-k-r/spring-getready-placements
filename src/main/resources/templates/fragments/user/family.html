@@ -77,65 +77,137 @@
 					</div>
 				</div>
 			</form>
-			<div th:if="${family.parents}!=null" class="flex w-full justify-center mt-4">
-				<div class="max-w-sm w-1/2 rounded overflow-hidden shadow-lg">
-					<div class="px-6 py-4">
-						<div class="font-bold text-xl mb-2">Father</div>
-						<div class="md:flex md:items-center mb-6 mt-6">
-							<div class="md:w-2/4">
-								<label
-									class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-									Name : </label>
+			<div th:if="${family.parents}!=null" class="w-full mt-4">
+				<div class="flex justify-center">
+					<div class="max-w-sm w-1/2 rounded overflow-hidden shadow-lg">
+						<div class="px-6 py-4">
+							<div class="font-bold text-xl mb-2">Father</div>
+							<div class="md:flex md:items-center mb-6 mt-6">
+								<div class="md:w-2/4">
+									<label
+										class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+										Name : </label>
+								</div>
+								<div class="md:w-2/4">
+									<label
+										class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+										th:text="${family.parents.fatherName}"> </label>
+								</div>
 							</div>
-							<div class="md:w-2/4">
-								<label
-									class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-									th:text="${family.parents.fatherName}"> </label>
+							<div class="md:flex md:items-center mb-6">
+								<div class="md:w-2/4">
+									<label
+										class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+										Occupation :</label>
+								</div>
+								<div class="md:w-2/4">
+									<label
+										class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+										th:text="${family.parents.fatherOccupation}"> </label>
+								</div>
 							</div>
 						</div>
-						<div class="md:flex md:items-center mb-6">
-							<div class="md:w-2/4">
-								<label
-									class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-									Occupation :</label>
+					</div>
+					<div class="max-w-sm w-1/2 rounded overflow-hidden shadow-lg ml-3">
+						<div class="px-6 py-4">
+							<div class="font-bold text-xl mb-2">Mother</div>
+							<div class="md:flex md:items-center mb-6 mt-6">
+								<div class="md:w-2/4">
+									<label
+										class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+										Name : </label>
+								</div>
+								<div class="md:w-2/4">
+									<label
+										class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+										th:text="${family.parents.motherName}"> </label>
+								</div>
 							</div>
-							<div class="md:w-2/4">
-								<label
-									class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-									th:text="${family.parents.fatherOccupation}"> </label>
+							<div class="md:flex md:items-center mb-6">
+								<div class="md:w-2/4">
+									<label
+										class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
+										Occupation :</label>
+								</div>
+								<div class="md:w-2/4">
+									<label
+										class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
+										th:text="${family.parents.motherOccupation}"> </label>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="max-w-sm w-1/2 rounded overflow-hidden shadow-lg ml-3">
-					<div class="px-6 py-4">
-						<div class="font-bold text-xl mb-2">Mother</div>
-						<div class="md:flex md:items-center mb-6 mt-6">
-							<div class="md:w-2/4">
-								<label
-									class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-									Name : </label>
-							</div>
-							<div class="md:w-2/4">
-								<label
-									class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-									th:text="${family.parents.motherName}"> </label>
-							</div>
-						</div>
-						<div class="md:flex md:items-center mb-6">
-							<div class="md:w-2/4">
-								<label
-									class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4">
-									Occupation :</label>
-							</div>
-							<div class="md:w-2/4">
-							<label
-									class="block text-black-500 font-bold md:text-right mb-1 md:mb-0 pr-4"
-									th:text="${family.parents.motherOccupation}"> </label>
-									</div>
-						</div>
+				<div class="w-full flex mt-6">
+					<div class="inline-flex">
+						<button class="bg-gray-300 py-2 px-4 font-bold rounded-l"
+							title="Create new course" ng-click="showSiblings = !showSiblings"
+							ng-class="{'bg-gray-500 text-white': showSiblings, 'text-gray-800': !showSiblings}">Add</button>
+						<button class="bg-gray-300 py-2 px-4 font-bold rounded-r"
+							title="Course details" ng-click="showSiblings = !showSiblings"
+							ng-class="{'bg-gray-500 text-white': !showSiblings, 'text-gray-800': showSiblings}">Show</button>
 					</div>
 				</div>
+				<div class="w-full flex justify-center" ng-if="showSiblings">
+					<form class="w-full max-w-lg" th:action="@{/home/update/sibling}"
+						method="POST">
+						<div class="flex flex-wrap -mx-3 mb-6">
+							<div class="w-full px-3 mb-6 md:mb-0">
+								<label
+									class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+									Sibling's Name </label> <input
+									class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+									type="text" placeholder="Sibling's name" name="siblingName">
+							</div>
+						</div>
+						<div class="flex flex-wrap -mx-3 mb-6">
+							<div class="w-full px-3 mb-6 md:mb-0">
+								<label
+									class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+									Sibling's Occupation </label>
+								<textarea rows="4"
+									class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+									placeholder="Sibling's occupation" name="siblingOccupation"></textarea>
+							</div>
+						</div>
+						<button
+							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+							type="submit">Save</button>
+					</form>
+				</div>
+				<table class="table-fixed mt-6" ng-if="!showSiblings">
+					<thead>
+						<tr>
+							<th class="w-1/6 px-4 py-2">#</th>
+							<th class="w-2/6 px-4 py-2">Sibling's Name</th>
+							<th class="w-3/6 px-4 py-2">Occupation</th>
+							<th class="w-1/6 px-4 py-2">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="${family.siblings.size()==0}">
+							<td colspan="4" class="border px-4 py-2 text-center">No
+								sibling details found</td>
+						</tr>
+						<tr th:each="sibling,itr: ${family.siblings}">
+							<td class="border px-4 py-2 text-center"
+								th:text="${itr.index + 1}"></td>
+							<td class="border px-4 py-2" th:text="${sibling.siblingName}"></td>
+							<td class="border px-4 py-2"
+								th:text="${sibling.siblingOccupation}"></td>
+							<td class="border px-4 py-2 text-center">
+								<form method="POST" th:action="@{/home/delete/sibling}"
+									class="mb-0">
+									<input type="hidden" name="sibling_id"
+										th:value="${sibling.siblingId}" />
+									<button
+										class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+										type="submit">Delete</button>
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>

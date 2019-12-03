@@ -112,7 +112,8 @@ public class HomeController {
 	@RequestMapping(path = "/home/update/{section}", method = RequestMethod.POST)
 	public ModelAndView updateProfile(@PathVariable(name = "section", required = false) String section,
 			@ModelAttribute ProfileTemplate profile, @ModelAttribute AcademicTemplate academy,
-			@ModelAttribute("parents") ParentsTemplate parents, ModelAndView modelView, RedirectAttributes redirectAttributes) {
+			@ModelAttribute("parents") ParentsTemplate parents, ModelAndView modelView,
+			RedirectAttributes redirectAttributes) {
 		UserDetail userDetail = getCurrentUser();
 		if (section.contentEquals("profile")) {
 			boolean result = profileService.updateProfile(profile, userDetail);
@@ -133,12 +134,20 @@ public class HomeController {
 			}
 			modelView.setViewName("redirect:/home/family");
 		}
+		else if (section.contentEquals("sibling")) {
+			boolean result = relationService.addSiblingDetails(parents, userDetail.getUserUuid());
+			if (result) {
+				redirectAttributes.addFlashAttribute("message", "Sibling added successfully");
+			}
+			modelView.setViewName("redirect:/home/family");
+		}
 		return modelView;
 	}
 
 	@RequestMapping(path = "/home/delete/{section}", method = RequestMethod.POST)
 	public ModelAndView deleteDetails(@PathVariable(name = "section", required = false) String section,
-			@RequestParam(name = "academy_id", required = false) Integer academicId, ModelAndView modelView,
+			@RequestParam(name = "academy_id", required = false) Integer academicId,
+			@RequestParam(name = "sibling_id", required = false) Integer siblingId, ModelAndView modelView,
 			RedirectAttributes redirectAttributes) {
 		UserDetail userDetail = getCurrentUser();
 		if (section.contentEquals("academy")) {
@@ -147,6 +156,12 @@ public class HomeController {
 				redirectAttributes.addFlashAttribute("message", "Academic details updated successfully");
 			}
 			modelView.setViewName("redirect:/home/academy");
+		} else if (section.contentEquals("sibling")) {
+			boolean result = relationService.deleteSiblings(siblingId, userDetail.getUserUuid());
+			if (result) {
+				redirectAttributes.addFlashAttribute("message", "Sibling's updated successfully");
+			}
+			modelView.setViewName("redirect:/home/family");
 		}
 		return modelView;
 	}

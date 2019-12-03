@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,32 @@ public class RelationService {
 			result = familyDetailRepository.save(familyDetail) != null;
 			userDetail.setFamilyDetail(familyDetail);
 			userDetailRepository.save(userDetail);
+		}
+		return result;
+	}
+
+	public boolean addSiblingDetails(ParentsTemplate parents, String uuid) {
+		boolean result = false;
+		UserDetail userDetail = userDetailRepository.findByUserUuidEquals(uuid);
+		if (userDetail != null) {
+			SiblingsDetail siblingsDetail = new SiblingsDetail();
+			siblingsDetail.setSiblingName(parents.getSiblingName());
+			siblingsDetail.setSiblingOccupation(parents.getSiblingOccupation());
+			siblingsDetail.setFamilyDetail(userDetail.getFamilyDetail());
+			result = siblingsDetailRepository.save(siblingsDetail) != null;
+		}
+		return result;
+	}
+
+	public boolean deleteSiblings(Integer siblingId, String uuid) {
+		boolean result = false;
+		UserDetail userDetail = userDetailRepository.findByUserUuidEquals(uuid);
+		if (userDetail != null) {
+			Optional<SiblingsDetail> siblingsDetail = siblingsDetailRepository.findById(siblingId);
+			if (siblingsDetail.isPresent()) {
+				siblingsDetailRepository.delete(siblingsDetail.get());
+				result = true;
+			}
 		}
 		return result;
 	}
