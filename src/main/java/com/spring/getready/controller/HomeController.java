@@ -28,9 +28,11 @@ import com.spring.getready.repository.UserDetailRepository;
 import com.spring.getready.services.AcademicService;
 import com.spring.getready.services.AssignmentService;
 import com.spring.getready.services.ProfileService;
+import com.spring.getready.services.RelationService;
 import com.spring.getready.services.SubmissionService;
 import com.spring.getready.services.UploadFileService;
 import com.spring.getready.template.model.AcademicTemplate;
+import com.spring.getready.template.model.ParentsTemplate;
 import com.spring.getready.template.model.ProfileTemplate;
 
 @Controller
@@ -57,6 +59,9 @@ public class HomeController {
 	@Autowired
 	private AcademicService academicService;
 
+	@Autowired
+	private RelationService relationService;
+
 	@RequestMapping(path = "/home", method = RequestMethod.GET)
 	public ModelAndView redirectToHome(ModelAndView modelAndView) {
 		modelAndView.setViewName("redirect:/home/assignment");
@@ -73,6 +78,8 @@ public class HomeController {
 			model.addAttribute("profile", profileService.getProfileDetails(userDetail.getUserUuid()));
 		} else if (page.contentEquals("academy")) {
 			model.addAttribute("academy", academicService.getAcademicDetails(userDetail.getUserUuid()));
+		} else if (page.contentEquals("family")) {
+			model.addAttribute("family", relationService.getFamilyDetails(userDetail.getUserUuid()));
 		}
 		return "home";
 	}
@@ -104,8 +111,8 @@ public class HomeController {
 
 	@RequestMapping(path = "/home/update/{section}", method = RequestMethod.POST)
 	public ModelAndView updateProfile(@PathVariable(name = "section", required = false) String section,
-			@ModelAttribute ProfileTemplate profile, @ModelAttribute AcademicTemplate academy, ModelAndView modelView,
-			RedirectAttributes redirectAttributes) {
+			@ModelAttribute ProfileTemplate profile, @ModelAttribute AcademicTemplate academy,
+			@ModelAttribute("parents") ParentsTemplate parents, ModelAndView modelView, RedirectAttributes redirectAttributes) {
 		UserDetail userDetail = getCurrentUser();
 		if (section.contentEquals("profile")) {
 			boolean result = profileService.updateProfile(profile, userDetail);
@@ -119,6 +126,12 @@ public class HomeController {
 				redirectAttributes.addFlashAttribute("message", "Academic details successfully added");
 			}
 			modelView.setViewName("redirect:/home/academy");
+		} else if (section.contentEquals("family")) {
+			boolean result = relationService.addFamilyDetails(parents, userDetail.getUserUuid());
+			if (result) {
+				redirectAttributes.addFlashAttribute("message", "Family details added successfully");
+			}
+			modelView.setViewName("redirect:/home/family");
 		}
 		return modelView;
 	}
